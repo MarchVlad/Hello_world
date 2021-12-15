@@ -1,17 +1,25 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+
 const app = express();
 
-let data = 0;
-data = Number(data);
+app.use(cookieParser());
 
-app.get('/hello-world', function(request, response, next){
-    data = data + 1;
-    console.log(data);
-    response.send(`Amount of your visits: ${String(data)}`);
+let data = '0';
+
+app.get('/hello-world', (request, response) => {
+    
+    response.cookie('count', data);
+    data = request.cookies['count'];
+    data = Number(data) + 1;
+    response.cookie('count', data);
+    console.log('Cookies:', data);
+    //response.clearCookie('count');
+    response.send(`Count:${data}`);
 })
 
 app.get('/*', function (request, response) {
     response.sendStatus(404); 
 });
 
-app.listen(3000, () => console.log('The server is running port 3000...'));
+app.listen(3000);

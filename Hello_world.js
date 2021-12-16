@@ -5,22 +5,26 @@ const app = express();
 
 app.use(cookieParser());
 
-let data = 0;
-
-app.use('/hello-worlds', (request, response) => {
-    let count = 0;
-    response.cookie('count', count).send();
-})
+let data = 1;
 
 app.get('/hello-world', (request, response) => {
-    console.log(data);
+    if(request.cookies['count'])
+    {
+        data = request.cookies['count'];
+    }
+    if(data === 1)
+    {
+        response.cookie('count', data).send();
+        data++;
+    }
+    else
+    {
     data = request.cookies['count'];
-    console.log(data);
     data++;
     response.cookie('count', data);
-    //response.clearCookie('count');
     response.send(`Count:${request.cookies['count']}`);
     console.log('Cookies:', request.cookies);
+    }
 })
 
 app.get('/*', function (request, response) {
